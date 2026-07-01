@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saanvi S Gowda — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --paper:#FBF7F0;
+    --paper-dim:#F1ECE1;
+    --coral:#FF6B4A;
+    --coral-dim:#FFE3DA;
+    --teal:#1F4E5F;
+    --teal-dim:#DCEAEC;
+    --slate:#7C8798;
+    --line: rgba(20,33,61,0.12);
+    --accent: var(--teal);
+    --accent-dim: var(--teal-dim);
+    --mode-label: "code";
+  }
+  [data-mode="stage"]{
+    --accent: var(--coral);
+    --accent-dim: var(--coral-dim);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    transition:background .5s ease;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 32px;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 32px;
+    mix-blend-mode:normal;
+  }
+  .nav-mark{
+    font-family:'Fraunces', serif;font-style:italic;font-weight:600;
+    font-size:20px;letter-spacing:0.01em;
+  }
+  .nav-links{display:flex;gap:28px;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;}
+  .nav-links a{text-decoration:none;opacity:0.75;transition:opacity .2s;border-bottom:1px solid transparent;padding-bottom:2px;}
+  .nav-links a:hover{opacity:1;border-color:currentColor;}
+  @media (max-width:640px){.nav-links{display:none;}}
+
+  /* ---------- MODE TOGGLE ---------- */
+  .mode-toggle{
+    position:fixed; bottom:28px; right:28px; z-index:60;
+    display:flex; align-items:center; gap:10px;
+    background:var(--ink); color:var(--paper);
+    padding:8px 10px 8px 16px; border-radius:999px;
+    font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    box-shadow:0 8px 24px rgba(20,33,61,0.25);
+  }
+  .mode-toggle span{opacity:0.55;transition:opacity .25s;}
+  .mode-toggle span.active{opacity:1;font-weight:600;}
+  .switch{
+    width:44px;height:24px;border-radius:999px;background:rgba(251,247,240,0.2);
+    position:relative;cursor:pointer;border:none;padding:0;
+  }
+  .switch::after{
+    content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+    background:var(--accent);transition:transform .3s ease, background .3s ease;
+  }
+  [data-mode="stage"] .switch::after{transform:translateX(20px);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+    padding-top:120px;padding-bottom:80px;
+  }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono', monospace;font-size:13px;color:var(--accent);
+    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:18px;
+    transition:color .4s ease;
+  }
+  .hero h1{
+    font-family:'Fraunces', serif;font-weight:600;
+    font-size:clamp(52px, 9vw, 118px);line-height:0.96;margin:0;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{font-style:italic;font-weight:500;color:var(--accent);transition:color .4s ease;}
+  .hero-sub{
+    max-width:520px;margin-top:26px;font-size:17px;line-height:1.65;color:var(--ink);opacity:0.72;
+  }
+  .hero-cta{margin-top:38px;display:flex;gap:16px;flex-wrap:wrap;}
+  .btn{
+    font-family:'Space Grotesk', sans-serif;font-weight:500;font-size:14px;
+    padding:13px 24px;border-radius:999px;text-decoration:none;
+    border:1px solid var(--ink);transition:all .25s ease;display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-solid{background:var(--ink);color:var(--paper);}
+  .btn-solid:hover{background:var(--accent);border-color:var(--accent);}
+  .btn-ghost{background:transparent;color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink);color:var(--paper);}
+
+  /* equalizer / grid backdrop */
+  .hero-visual{
+    position:absolute;right:32px;top:50%;transform:translateY(-50%);
+    display:flex;align-items:flex-end;gap:7px;height:180px;
+    opacity:0.9;
+  }
+  @media (max-width:900px){.hero-visual{display:none;}}
+  .bar{
+    width:9px;background:var(--accent);border-radius:4px;
+    transition:background .4s ease, height .5s ease;
+  }
+  [data-mode="code"] .bar{ animation:none; height:var(--h) !important; opacity:0.35; }
+  [data-mode="stage"] .bar{ animation:bounce 1.1s ease-in-out infinite; animation-delay:var(--d); }
+  @keyframes bounce{
+    0%,100%{height:18px;}
+    50%{height:var(--h);}
+  }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:110px 0;border-top:1px solid var(--line);}
+  .kicker{
+    font-family:'JetBrains Mono', monospace;font-size:12px;letter-spacing:0.12em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:14px;transition:color .4s ease;
+  }
+  h2.title{
+    font-family:'Fraunces', serif;font-weight:600;font-size:clamp(32px,4vw,46px);
+    margin:0 0 40px;letter-spacing:-0.01em;
+  }
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:60px;}
+  @media (max-width:760px){.about-grid{grid-template-columns:1fr;}}
+  .about-text p{font-size:18px;line-height:1.75;color:var(--ink);margin:0 0 18px;}
+  .about-facts{display:flex;flex-direction:column;gap:0;}
+  .fact{padding:18px 0;border-top:1px solid var(--line);}
+  .fact:last-child{border-bottom:1px solid var(--line);}
+  .fact-k{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--slate);}
+  .fact-v{font-family:'Fraunces', serif;font-size:20px;margin-top:4px;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{position:relative;padding-left:32px;}
+  .timeline::before{
+    content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--line);
+  }
+  .tl-item{position:relative;padding-bottom:46px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-dot{
+    position:absolute;left:-32px;top:5px;width:11px;height:11px;border-radius:50%;
+    background:var(--paper);border:2px solid var(--accent);transition:border-color .4s ease;
+  }
+  .tl-year{font-family:'JetBrains Mono', monospace;font-size:12px;color:var(--slate);margin-bottom:6px;}
+  .tl-title{font-family:'Fraunces', serif;font-size:24px;font-weight:600;margin:0 0 4px;}
+  .tl-sub{font-size:15px;color:var(--accent);margin-bottom:8px;transition:color .4s ease;}
+  .tl-desc{font-size:15px;color:var(--slate);line-height:1.6;max-width:520px;}
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  @media (max-width:760px){.skills-grid{grid-template-columns:1fr;}}
+  .skill-card{
+    border:1px solid var(--line);border-radius:20px;padding:32px;background:var(--paper-dim);
+  }
+  .skill-card h3{
+    font-family:'Fraunces', serif;font-style:italic;font-weight:600;font-size:22px;margin:0 0 22px;
+  }
+  .skill-row{margin-bottom:20px;}
+  .skill-row:last-child{margin-bottom:0;}
+  .skill-row-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;}
+  .skill-row-top span:last-child{font-family:'JetBrains Mono', monospace;color:var(--slate);font-size:12px;}
+  .meter{height:8px;border-radius:999px;background:var(--line);overflow:hidden;}
+  .meter-fill{height:100%;border-radius:999px;background:var(--accent);width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1), background .4s ease;}
+
+  .terminal{
+    margin-top:36px;background:var(--ink);color:#D9E4E6;border-radius:16px;padding:26px 28px;
+    font-family:'JetBrains Mono', monospace;font-size:13.5px;line-height:1.9;
+  }
+  .terminal .dots{display:flex;gap:6px;margin-bottom:16px;}
+  .terminal .dots span{width:10px;height:10px;border-radius:50%;background:rgba(217,228,230,0.25);}
+  .terminal .prompt{color:var(--coral);}
+  .terminal .out{color:#8FE3C0;}
+  .caret{display:inline-block;width:8px;height:15px;background:#D9E4E6;vertical-align:-2px;animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---------- HOBBIES ---------- */
+  .hobby-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media (max-width:760px){.hobby-grid{grid-template-columns:1fr;}}
+  .hobby-card{
+    border-radius:20px;padding:34px;position:relative;overflow:hidden;min-height:230px;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    border:1px solid var(--line);
+  }
+  .hobby-card.dance{background:var(--coral-dim);}
+  .hobby-card.music{background:var(--teal-dim);}
+  .hobby-card h3{font-family:'Fraunces', serif;font-style:italic;font-size:28px;margin:0 0 8px;}
+  .hobby-card.dance h3{color:#B23B1E;}
+  .hobby-card.music h3{color:var(--teal);}
+  .hobby-card p{font-size:14.5px;line-height:1.6;margin:0;color:var(--ink);opacity:0.75;max-width:340px;}
+  .pulse-row{position:absolute;top:28px;left:34px;display:flex;gap:5px;align-items:flex-end;height:46px;}
+  .pulse-row i{display:block;width:5px;border-radius:3px;background:#B23B1E;opacity:0.5;animation:pulse 1s ease-in-out infinite;}
+  .hobby-card.music .pulse-row i{background:var(--teal);}
+  @keyframes pulse{0%,100%{height:10px;}50%{height:var(--h);}}
+  .note-row{position:absolute;top:30px;left:34px;font-family:'Fraunces', serif;font-size:26px;opacity:0.35;color:var(--teal);}
+
+  /* ---------- CONTACT ---------- */
+  .contact-box{
+    border:1px solid var(--line);border-radius:24px;padding:60px;
+    background:var(--paper-dim);text-align:center;
+  }
+  .contact-box h2{margin-bottom:14px;}
+  .contact-box p{max-width:440px;margin:0 auto 32px;color:var(--slate);font-size:15px;line-height:1.6;}
+  .contact-list{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;font-size:14px;margin-top:34px;}
+  .contact-list div{color:var(--slate);}
+  .contact-list strong{display:block;color:var(--ink);font-family:'Fraunces', serif;font-size:16px;margin-top:2px;}
+
+  footer{padding:36px 0;text-align:center;font-size:12px;color:var(--slate);letter-spacing:0.04em;}
+</style>
+</head>
+<body data-mode="code">
+
+<nav>
+  <div class="nav-mark">Saanvi&nbsp;S&nbsp;Gowda</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#education">Education</a>
+    <a href="#skills">Skills</a>
+    <a href="#hobbies">Stage</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="mode-toggle" role="group" aria-label="Toggle site theme">
+  <span id="label-code" class="active">Code</span>
+  <button class="switch" id="modeSwitch" aria-label="Switch between code and stage mode"></button>
+  <span id="label-stage">Stage</span>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="hero-eyebrow" id="eyebrow">&lt; first-year engineer /&gt;</p>
+    <h1>Saanvi<br>S <em>Gowda</em></h1>
+    <p class="hero-sub">ISE student at REVA University who debugs code by day and counts beats by night. Two disciplines, one habit: show up, practice, repeat until it's right.</p>
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="#education">See the timeline</a>
+      <a class="btn btn-ghost" href="#contact">Get in touch</a>
+    </div>
+  </div>
+  <div class="hero-visual" id="heroVisual"></div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">01 — About</p>
+      <h2 class="title">Two rhythms,<br>one discipline.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a first-year Information Science &amp; Engineering student, currently in my second semester at REVA University. C and Python are where I'm building my technical foundation right now — logic first, syntax second.</p>
+        <p>Outside the classroom, dance and music aren't a break from that focus, they're where I built it. Years of counting beats and holding formations taught me the same thing debugging does: slow down, find the exact spot that's off, fix it, run it again.</p>
+      </div>
+      <div class="about-facts reveal">
+        <div class="fact"><div class="fact-k">Currently</div><div class="fact-v">1st Year, 2nd Sem · ISE</div></div>
+        <div class="fact"><div class="fact-k">Based in</div><div class="fact-v">Bengaluru, Karnataka</div></div>
+        <div class="fact"><div class="fact-k">Building with</div><div class="fact-v">C &amp; Python</div></div>
+        <div class="fact"><div class="fact-k">Off the clock</div><div class="fact-v">Dance &amp; Music</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">02 — Path so far</p>
+      <h2 class="title">From classroom<br>to campus.</h2>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Now</div>
+        <div class="tl-title">B.E. Information Science &amp; Engineering</div>
+        <div class="tl-sub">REVA University</div>
+        <div class="tl-desc">1st Year, 2nd Semester — building fundamentals in programming, logic, and problem solving.</div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Before that</div>
+        <div class="tl-title">Pre-University Course</div>
+        <div class="tl-sub">Sai Angeles PU College</div>
+        <div class="tl-desc">Completed PUC, laying the groundwork for engineering entrance.</div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Where it started</div>
+        <div class="tl-title">Schooling</div>
+        <div class="tl-sub">Kuvempu Vidyaniketan School</div>
+        <div class="tl-desc">Completed schooling — first stage, first curtain call, first lines of code.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">03 — Skills</p>
+      <h2 class="title">What I'm<br>practicing.</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <h3>Languages</h3>
+        <div class="skill-row">
+          <div class="skill-row-top"><span>C Programming</span><span>logic &amp; DSA basics</span></div>
+          <div class="meter"><div class="meter-fill" data-level="80"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-top"><span>Python</span><span>scripting &amp; apps</span></div>
+          <div class="meter"><div class="meter-fill" data-level="75"></div></div>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <h3>Strengths</h3>
+        <div class="skill-row">
+          <div class="skill-row-top"><span>Time management</span><span>rehearsal-tested</span></div>
+          <div class="meter"><div class="meter-fill" data-level="88"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-top"><span>Team collaboration</span><span>on stage &amp; in class</span></div>
+          <div class="meter"><div class="meter-fill" data-level="85"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="terminal reveal">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div><span class="prompt">saanvi@reva</span> ~ % python skills.py</div>
+      <div class="out">["C Programming", "Python", "Problem Solving", "Discipline"]<span class="caret"></span></div>
+    </div>
+  </div>
+</section>
+
+<section id="hobbies">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="kicker">04 — Off script</p>
+      <h2 class="title">Where the<br>music plays.</h2>
+    </div>
+    <div class="hobby-grid">
+      <div class="hobby-card dance reveal">
+        <div class="pulse-row" id="dancePulse"></div>
+        <h3>Dance</h3>
+        <p>Trained performer on college and cultural stages. Choreography taught me precision under pressure — the same instinct I now bring to tracing a bug to its source.</p>
+      </div>
+      <div class="hobby-card music reveal">
+        <div class="note-row">♪ ♫ ♪</div>
+        <h3>Music</h3>
+        <p>Singing and listening are where I reset. It's the same kind of focus as a clean compile — everything lining up, nothing out of place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box reveal">
+      <p class="kicker" style="justify-content:center;display:flex;">05 — Contact</p>
+      <h2 class="title" style="margin-bottom:8px;">Let's talk.</h2>
+      <p>Open to internships, campus projects, and collaborations — technical or on stage. Reach out and I'll get back to you.</p>
+      <div class="hero-cta" style="justify-content:center;">
+        <a class="btn btn-solid" href="mailto:add-your-email@example.com">Email me</a>
+        <a class="btn btn-ghost" href="#" onclick="return false;">Download resume</a>
+      </div>
+      <div class="contact-list">
+        <div>Email<strong>[add email]</strong></div>
+        <div>Phone<strong>[add phone]</strong></div>
+        <div>Location<strong>Bengaluru, KA</strong></div>
+        <div>LinkedIn<strong>[add link]</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Saanvi S Gowda — built with C, Python, and a bit of rhythm.</footer>
+
+<script>
+  const body = document.body;
+  const modeSwitch = document.getElementById('modeSwitch');
+  const labelCode = document.getElementById('label-code');
+  const labelStage = document.getElementById('label-stage');
+  const eyebrow = document.getElementById('eyebrow');
+
+  function setMode(mode){
+    body.setAttribute('data-mode', mode);
+    labelCode.classList.toggle('active', mode==='code');
+    labelStage.classList.toggle('active', mode==='stage');
+    eyebrow.textContent = mode==='code' ? '< first-year engineer />' : '♪ dancer & musician ♪';
+  }
+  modeSwitch.addEventListener('click', ()=>{
+    setMode(body.getAttribute('data-mode')==='code' ? 'stage' : 'code');
+  });
+
+  const heights = [40,90,60,120,50,100,70,140,55,95,65,110];
+  const heroVisual = document.getElementById('heroVisual');
+  heights.forEach((h,i)=>{
+    const bar = document.createElement('div');
+    bar.className='bar';
+    bar.style.setProperty('--h', h+'px');
+    bar.style.setProperty('--d', (i*0.08)+'s');
+    bar.style.height = (body.getAttribute('data-mode')==='code' ? h : 18) + 'px';
+    heroVisual.appendChild(bar);
+  });
+
+  const dancePulse = document.getElementById('dancePulse');
+  [26,40,20,44,30].forEach((h,i)=>{
+    const bar = document.createElement('i');
+    bar.style.setProperty('--h', h+'px');
+    bar.style.animationDelay = (i*0.12)+'s';
+    dancePulse.appendChild(bar);
+  });
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        if(e.target.querySelector && e.target.querySelectorAll('.meter-fill').length){
+          e.target.querySelectorAll('.meter-fill').forEach(m=>{
+            m.style.width = m.dataset.level + '%';
+          });
+        }
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.2});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
